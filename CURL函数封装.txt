@@ -1,0 +1,68 @@
+if (!function_exists('postRequest')) {
+    //post方式的请求
+    function postRequest($url,$data){
+        //初始化curl函数
+         $ch = curl_init();
+         //设置请求的路径
+         curl_setopt($ch, CURLOPT_URL,$url);
+         //不验证ssl安全证书
+         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+         curl_setopt($ch,CURLOPT_SSL_VERIFYHOST,FALSE);
+         //设置请求的方式为post
+         curl_setopt($ch,CURLOPT_POST,1);
+         //传递post请求方式需要些带的数据
+         curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+         //设置请求结果以文件流的形式返回而不是直接输出
+         curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
+         $output = curl_exec($ch);
+          //关闭连接
+          curl_close($ch);
+         return $output; 
+    }
+}
+
+if (!function_exists('getRequest')) {
+    //getf方式的请求
+    function getRequest($url){
+       // var_dump($url);die;
+       $ch = curl_init();
+       //设置请求的路径
+       curl_setopt($ch,CURLOPT_URL,$url);
+       //不需要验证ssl证书
+       curl_setopt($ch,CURLOPT_SSL_VERIFYPEER,FALSE);
+       curl_setopt($ch, CURLOPT_SSL_VERIFYHOST,FALSE);
+       //设置获取的信息以文件流的形式返回,不在页面中输出任何结果
+       curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+       $str = curl_exec($ch);
+       curl_close($ch);
+       
+      return $str;
+    }
+}
+
+if (!function_exists('request')) {
+    //将post请求方式与get请求方式进行综合
+    function request($url,$https=false,$method="get",$data=null){
+        //1 初始化curl函数
+        $ch = curl_init($url);
+        //2 设置相关的参数
+        //以文件流的形式返回结果,不在页面输出任何结果
+        curl_setopt($ch,CURLOPT_RETURNTRANSFER,TRUE);
+        //判断是否为https请求,如果是的话,就要验证ssl证书
+        if($https==true){
+            curl_setopt($ch,CURLOPT_SSL_VERIFYPEER,false);
+            curl_setopt($ch,CURLOPT_SSL_VERIFYHOST,false);
+        }
+        //判断是否为post请求,如果是就传递参数
+        if($method=='post'){
+            curl_setopt($ch, CURLOPT_POST, TRUE);
+            curl_setopt($ch,CURLOPT_POSTFIELDS,$data);
+        }
+        //发送请求
+        $str = curl_exec($ch);
+       // var_dump($str);
+        //关闭连接
+        curl_close($ch);
+         return  $str;
+    }
+}
